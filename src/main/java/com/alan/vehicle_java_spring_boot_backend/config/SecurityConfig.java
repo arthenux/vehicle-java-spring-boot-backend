@@ -2,6 +2,7 @@ package com.alan.vehicle_java_spring_boot_backend.config;
 
 import java.util.List;
 
+import com.alan.vehicle_java_spring_boot_backend.auth.InventoryUserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -12,11 +13,10 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
@@ -53,12 +53,10 @@ public class SecurityConfig {
     }
 
     @Bean
-    public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
-        return new InMemoryUserDetailsManager(
-                User.withUsername("Bob")
-                        .password(passwordEncoder.encode("password"))
-                        .roles("MANAGER")
-                        .build());
+    public UserDetailsService userDetailsService(InventoryUserRepository inventoryUserRepository) {
+        return (username) -> inventoryUserRepository.findByUsernameIgnoreCase(username)
+                .map(com.alan.vehicle_java_spring_boot_backend.auth.InventoryUserPrincipal::new)
+                .orElseThrow(() -> new UsernameNotFoundException("User '%s' was not found".formatted(username)));
     }
 
     @Bean
