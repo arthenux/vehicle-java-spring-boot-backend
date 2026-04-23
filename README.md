@@ -101,6 +101,13 @@ If `APP_SEED_PASSWORD` is not provided, the application starts normally but skip
 
 The API runs on `http://localhost:8080`.
 
+## Related Repository
+
+This repository contains the Spring Boot backend API for the Vehicle Inventory application.
+
+Frontend repository:
+[vehicle-angular-frontend](https://github.com/arthenux/vehicle-angular-frontend)
+
 ## Testing
 
 ### Run the test suite
